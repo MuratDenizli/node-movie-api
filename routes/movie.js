@@ -11,11 +11,27 @@ router.get('/', function (req, res) {
 });
 
 router.get('/:movie_id', (req, res, next) => {
-  const promise = Movie.findById(req.params.movie_id);
+	const promise = Movie.findById(req.params.movie_id);
+
+	promise.then((movie) => {
+		if (!movie)
+			next({ message: 'The movie was not found.', code: 99 });
+
+		res.json(movie);
+	}).catch((err) => {
+		res.json(err);
+	});
+});
+
+router.put('/:movie_id', function (req, res, next) {
+  const promise = Movie.findByIdAndUpdate(
+    req.params.movie_id,
+    req.body
+  );
+
   promise.then((movie) => {
-    if (!movie) {
-      next({message:'Movie was not found',code:99});
-    }
+    if (!movie)
+      next({ message: 'The movie was not found.', code: 99 });
     res.json(movie);
   }).catch((err) => {
     res.json(err);
